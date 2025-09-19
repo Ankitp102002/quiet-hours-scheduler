@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
 
-export function getUserFromCookies() {
-  const c = cookies();
-  const id = c.get('uid')?.value;
-  const email = c.get('email')?.value;
+export async function getUserFromCookies() {
+  const cookieStore = await cookies();
+  const id = cookieStore.get('uid')?.value;
+  const email = cookieStore.get('email')?.value;
   if (!id || !email) return null;
   return { id, email };
 }

@@ -7,7 +7,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const user = getUserFromCookies();
+  const user = await getUserFromCookies();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const blockId = params.id;

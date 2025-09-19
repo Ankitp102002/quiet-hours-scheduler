@@ -14,7 +14,7 @@ const BlockCreateSchema = z.object({
 });
 
 export async function GET() {
-  const user = getUserFromCookies();
+  const user = await getUserFromCookies();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { blocks } = await collections();
@@ -32,7 +32,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const user = getUserFromCookies();
+  const user = await getUserFromCookies();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));

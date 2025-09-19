@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   const { email } = await req.json().catch(() => ({}));
@@ -8,7 +9,8 @@ export async function POST(req: NextRequest) {
   }
   const uid = randomUUID();
   const res = NextResponse.json({ ok: true, uid, email });
-  res.cookies.set('uid', uid, { path: '/', maxAge: 60 * 60 * 24 * 365 });
-  res.cookies.set('email', email, { path: '/', maxAge: 60 * 60 * 24 * 365 });
+  const cookieStore = await cookies();
+  cookieStore.set('uid', uid, { path: '/', maxAge: 60 * 60 * 24 * 365 });
+  cookieStore.set('email', email, { path: '/', maxAge: 60 * 60 * 24 * 365 });
   return res;
 }
