@@ -95,8 +95,9 @@ export async function POST(req: NextRequest) {
     const created = await blocks.findOne({ _id: insertedId! });
     return NextResponse.json({ ...created, _id: insertedId!.toString() }, { status: 201 });
 
-  } catch (err: any) {
-    if (err?.code === 11000) {
+  } catch (err: unknown) {
+    const error = err as { code?: number };
+    if (error?.code === 11000) {
       return NextResponse.json({ error: 'You already have a quiet hour scheduled at this time' }, { status: 409 });
     }
     console.error('Create block error', err);

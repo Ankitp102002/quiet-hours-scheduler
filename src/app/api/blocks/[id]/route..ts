@@ -28,8 +28,9 @@ export async function DELETE(
     });
 
     return NextResponse.json({ ok: true });
-  } catch (err: any) {
-    if (err?.message === 'NOT_FOUND') {
+  } catch (err: unknown) {
+    const error = err as Error;
+    if (error?.message === 'NOT_FOUND') {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
     console.error('Delete block error', err);

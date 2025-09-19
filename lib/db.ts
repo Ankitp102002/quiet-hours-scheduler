@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
+import { MongoClient, Db, ObjectId } from 'mongodb';
 
 const uri = process.env.MONGODB_URI!;
 const dbName = process.env.MONGODB_DB || 'quiet_hours';
