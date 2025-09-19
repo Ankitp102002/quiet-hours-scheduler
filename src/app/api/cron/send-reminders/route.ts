@@ -30,12 +30,22 @@ export async function POST(req: NextRequest) {
 
   let sent = 0;
   for (const blk of candidates) {
-    const claimed = await blocks.findOneAndUpdate(
-      { _id: blk._id, reminder10Sent: { $ne: true } },
-      { $set: { reminder10Sent: true, reminder10SentAt: new Date() } },
-      { returnDocument: 'after' }
+    // Fix: Use updateOne instead of findOneAndUpdate for better type safety
+    const updateResult = await blocks.updateOne(
+      { 
+        _id: blk._id, 
+        reminder10Sent: { $ne: true } 
+      },
+      { 
+        $set: { 
+          reminder10Sent: true, 
+          reminder10SentAt: new Date() 
+        } 
+      }
     );
-    if (!claimed.value) continue;
+    
+    // Check if the update was successful
+    if (updateResult.modifiedCount === 0) continue;
 
     const tz = blk.timezone || 'UTC';
     const humanStart = formatInTimeZone(blk.startAt, tz, "EEE MMM d, yyyy • h:mm a '('zzz')'");
@@ -60,9 +70,13 @@ export async function POST(req: NextRequest) {
       });
       sent++;
     } catch (e) {
+      // Revert the reminder flag if email fails
       await blocks.updateOne(
         { _id: blk._id },
-        { $set: { reminder10Sent: false }, $unset: { reminder10SentAt: "" } }
+        { 
+          $set: { reminder10Sent: false }, 
+          $unset: { reminder10SentAt: "" } 
+        }
       );
       console.error('Email send failed for block', blk._id, e);
     }
